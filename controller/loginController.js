@@ -1,5 +1,6 @@
 import userModel from "../models/userSchema.js";
-
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 export const loginController = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -17,8 +18,10 @@ export const loginController = async (req, res) => {
         if (!comparePassword) { // FIXED: Proper check for password mismatch
             return res.status(400).json({ message: 'Invalid email & password' });
         }
+        var token = jwt.sign({ email: existEmail.email }, process.env.JWT_SECRET_KEY)
+        console.log(token);
 
-        res.status(200).json({ message: 'Login successfully' });
+        res.status(200).json({ message: 'Login successfully', token });
     } catch (error) {
         console.error('Login Error:', error);
         res.status(500).json({ message: 'Internal Server Error', error: error.message });

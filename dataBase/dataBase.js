@@ -2,21 +2,22 @@ import mongoose from "mongoose";
 
 export const connectDatabase = async () => {
     try {
-        // Database Connection
         const mongoUri = process.env.MONGO_URI;
 
-        mongoose.connect(mongoUri);
+        if (!mongoUri) {
+            throw new Error("MONGO_URI not found in environment variables");
+        }
 
-        mongoose.connection.on('connected', () => {
-            console.log('MongoDB connected successfully');
+        await mongoose.connect(mongoUri, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            ssl: true, // Required for MongoDB Atlas
         });
 
-        mongoose.connection.on('error', (err) => {
-            console.error('MongoDB connection error:', err);
-        });
+        console.log('MongoDB connected successfully');
 
     } catch (error) {
-        console.log(error);
-
+        console.error('MongoDB connection error:', error);
+        process.exit(1); // Optional: Exit process if DB fails to connect
     }
 }

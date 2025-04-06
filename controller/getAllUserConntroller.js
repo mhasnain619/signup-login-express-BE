@@ -1,6 +1,6 @@
 import userModel from "../models/userSchema.js";
 
-export const getAllUserController = async () => {
+export const getAllUserController = async (req, res) => {
     try {
         const getData = await userModel.find();
         res.status(200).json({ message: 'Fetched all newUsers', getData });
